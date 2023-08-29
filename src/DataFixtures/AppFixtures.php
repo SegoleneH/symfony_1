@@ -55,8 +55,8 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             $user->setEmail($data['email']);
             $password = $this->hasher->hashPassword($user, $data['password']);
             //* hachage du mot de passe  ^fonction 
-            $user = setPassword($password);
-            $user = setRoles($data['roles']);
+            $user->setPassword($password);
+            $user->setRoles($data['roles']);
 
             $this->manager->persist($user);
             // indique que la variable 'user' doit être stockée dans la base de données 

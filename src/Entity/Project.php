@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProjectRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,17 +22,33 @@ class Project
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 191)]
+    #[ORM\Column(length: 190)]
     private ?string $clientName = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $startDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $checkPointDate = null;
+    private ?\DateTimeInterface $checkpointDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $deliveryDate = null;
+
+    #[ORM\ManyToMany(targetEntity: Student::class, mappedBy: 'projects')]
+    private Collection $students;
+
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'projects')]
+    private Collection $tags;
+
+    #[ORM\ManyToMany(targetEntity: Tag::class)]
+    private Collection $Tag;
+
+    public function __construct()
+    {
+        $this->students = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+        $this->Tag = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -85,14 +103,14 @@ class Project
         return $this;
     }
 
-    public function getCheckPointDate(): ?\DateTimeInterface
+    public function getCheckpointDate(): ?\DateTimeInterface
     {
-        return $this->checkPointDate;
+        return $this->checkpointDate;
     }
 
-    public function setCheckPointDate(?\DateTimeInterface $checkPointDate): static
+    public function setCheckpointDate(?\DateTimeInterface $checkpointDate): static
     {
-        $this->checkPointDate = $checkPointDate;
+        $this->checkpointDate = $checkpointDate;
 
         return $this;
     }
@@ -107,5 +125,64 @@ class Project
         $this->deliveryDate = $deliveryDate;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Student>
+     */
+    public function getStudents(): Collection
+    {
+        return $this->students;
+    }
+
+    public function addStudent(Student $student): static
+    {
+        if (!$this->students->contains($student)) {
+            $this->students->add($student);
+            $student->addProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStudent(Student $student): static
+    {
+        if ($this->students->removeElement($student)) {
+            $student->removeProject($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): static
+    {
+        $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTag(): Collection
+    {
+        return $this->Tag;
     }
 }
