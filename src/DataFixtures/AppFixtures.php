@@ -42,15 +42,26 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
 
     public function loadAdmins(): void
     {
-        $user = new User();
-        $user->setEmail('admin@example.com');
-        $password = $this->hasher->hashPassword('123', $user);
-        //* hachage du mot de passe  ^fonction 
-        $user = setPassword($password);
-        $user = setRoles(['ROLE_ADMIN']);
+        $datas = [
+            [
+                'email' => 'admin@example.com',
+                'password' => '123',
+                'roles' => ['ROLE_ADMIN'],
+            ],
+        ];
 
-        $this->manager->persist($user);
-        // indique que la variable 'user' doit être stockée dans la base de données
+        foreach ($datas as $data){
+            $user = new User();
+            $user->setEmail($data['email']);
+            $password = $this->hasher->hashPassword($user, $data['password']);
+            //* hachage du mot de passe  ^fonction 
+            $user = setPassword($password);
+            $user = setRoles($data['roles']);
+
+            $this->manager->persist($user);
+            // indique que la variable 'user' doit être stockée dans la base de données 
+        }
+        
         $this->manager->flush();
     }
 }
