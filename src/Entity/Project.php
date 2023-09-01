@@ -40,14 +40,11 @@ class Project
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'projects')]
     private Collection $tags;
 
-    #[ORM\ManyToMany(targetEntity: Tag::class)]
-    private Collection $Tag;
 
     public function __construct()
     {
         $this->students = new ArrayCollection();
         $this->tags = new ArrayCollection();
-        $this->Tag = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,6 +159,12 @@ class Project
         return $this->tags;
     }
 
+    public function setTags(Collection $tags) : static {
+
+        $this->tags = $tags;
+        return $this;
+    }
+
     public function addTag(Tag $tag): static
     {
         if (!$this->tags->contains($tag)) {
@@ -176,13 +179,5 @@ class Project
         $this->tags->removeElement($tag);
 
         return $this;
-    }
-
-    /**
-     * @return Collection<int, Tag>
-     */
-    public function getTag(): Collection
-    {
-        return $this->Tag;
     }
 }
