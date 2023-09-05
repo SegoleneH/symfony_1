@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{title}}{% endblock %}
+
+{% block body %}
+
+    <h1>{{ title }}</h1>
+
+    <h2> One Tag </h2>
+
+    <h3>{{ cssTag.name }}(id {{ cssTag.id }})</h3>
+    <p>
+        {{cssTag.description}}
+    </p>
+
+    <h2> All Tags </h2>
+
+
+{% for tag in tags %}
+    <h3>{{ tag.name }}(id {{ tag.id }})</h3>
+    <p>
+        {{tag.description}}
+    </p>
+{% endfor %}
+
+<h2> All Tags </h2>
+
+{% for tag in nullDescriptionTags %}
+    <h3>{{ tag.name }}(id {{ tag.id }})</h3>
+    <p>
+        {{tag.description}}
+    </p>
+{% endfor %}
+
+<h2>Liste des tags avec une description</h2>
+
+{% for tag in notNullDescriptionTags %}
+    <h3>{{ tag.name }}(id {{ tag.id }})</h3>
+    <p>
+        {{tag.description}}
+    </p>
+{% endfor %}
+
+<h2>Liste des tags sans description</h2>
+
+{% for tag in nullDescriptionTags %}
+    <h3>{{ tag.name }}(id {{ tag.id }})</h3>
+    <p>
+        {{tag.description}}
+    </p>
+{% endfor %}
+
+<h2>Liste des tags d'une schoolYear</h2>
+
+{% for tag in schoolYearTags %}
+    <h3>{{ tag.name }}(id {{ tag.id }})</h3>
+    <p>
+        {{tag.description}}
+    </p>
+{% endfor %}
+
+<h2>Liste des students qui ont le tag HTML</h2>
+
+<ul>
+{% for student in htmlTag.students %}
+    <li>{{ student.firstName }} {{ student.lastName }} (id {{ student.id }})</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

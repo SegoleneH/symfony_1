@@ -34,6 +34,7 @@ class TagRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
     /**
      * This method finds all the tags containing a keyword, anywhere in the tag name
      * @param string $keyword The keyword to search for
@@ -88,7 +89,7 @@ class TagRepository extends ServiceEntityRepository
         ;
     }
 
-    //    public function findOneBySomeField($value): ?Tag
+//    public function findOneBySomeField($value): ?Tag
 //    {
 //        return $this->createQueryBuilder('t')
 //            ->andWhere('t.exampleField = :val')
