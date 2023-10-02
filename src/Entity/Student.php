@@ -2,11 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\StudentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ApiResource]
 #[ORM\Entity(repositoryClass: StudentRepository::class)]
 class Student
 {
@@ -28,6 +30,7 @@ class Student
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'students')]
     private Collection $tags;
 
+    #[Assert\Count(max: 1)]
     #[ORM\ManyToMany(targetEntity: Project::class, inversedBy: 'students')]
     private Collection $projects;
 
@@ -149,5 +152,10 @@ class Student
         $this->user = $user;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return "{$this->getFirstName()} (id {$this->getLastName()})";
     }
 }

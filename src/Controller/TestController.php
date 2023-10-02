@@ -18,6 +18,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class TestController extends AbstractController
 {
     #[Route('/tag', name: 'app_test_tag')]
+    public function softdelete(Tag $tag): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($tag);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('test/tag');
+    }
     public function tag(ManagerRegistry $doctrine): Response
     {
         $em = $doctrine->getManager();

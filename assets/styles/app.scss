@@ -1,0 +1,46 @@
+@import "bootstrap/scss/bootstrap.scss";
+
+body{
+    width: 100vw;
+    height: 100vh;
+    background-color: $indigo-200;
+}
+.container{
+    margin: 0;
+    padding: 0;
+}
+//& peut interagir
+.col {
+    padding: 0;
+}
+.navbar {
+    background-color: $indigo-400!important;
+}
+
+.row, .col, .navbar {
+    width: 100vw;
+    margin: 0!important;
+}
+
+h1 {
+    margin: 2vh auto;
+    width: 33%;
+}
+
+form {
+    width: 60vw;
+}
+
+button {
+    margin: 0 0 0 1rem;
+}
+
+h1, form {
+    margin: 0 auto;
+}
+//* compile dans public/app.css 
+.form_scrollable-checkboxes {
+    overflow: scroll;
+    height: 5rem;
+    width: 40rem;
+}

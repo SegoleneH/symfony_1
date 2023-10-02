@@ -2,19 +2,39 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+//! À FAIRE SUR TOUTES LES ENTITÉS
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+//! À FAIRE SUR TOUTES LES ENTITÉS
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[ApiResource]
+#[Assert\Cascade]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[Gedmo\SoftDeletable(fieldName: "deletedAt", timeAware:false, hardDelete:false)]
+//! ^ À FAIRE SUR TOUTES LES ENTITÉS
+#[UniqueEntity('email')]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    use TimestampableEntity;
+    use SoftDeleteableEntity;
+    //! ^ À FAIRE SUR TOUTES LES ENTITÉS
+    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\Email()]
+    #[Assert\NotBlank]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
@@ -24,6 +44,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 3, max: 191)]
     #[ORM\Column]
     private ?string $password = null;
 
@@ -129,5 +151,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->student = $student;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return "{$this->getEmail()}";
     }
 }

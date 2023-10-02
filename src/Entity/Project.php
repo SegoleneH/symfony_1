@@ -2,42 +2,62 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ProjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[ApiResource]
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
+#[Gedmo\SoftDeletable(fieldName: "deletedAt", timeAware: false, hardDelete: false)]
 class Project
 {
+    use TimestampableEntity;
+    use SoftDeleteableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5, max: 100)]
     #[ORM\Column(length: 190)]
     private ?string $name = null;
 
+    #[Assert\Length(min: 5, max: 100)]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length( max: 100)]
     #[ORM\Column(length: 190)]
     private ?string $clientName = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $startDate = null;
 
+    #[Assert\GreaterThan(propertyPath: 'startDate')]
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $checkpointDate = null;
 
+    #[Assert\GreaterThan(propertyPath: 'checkpointDate')]
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $deliveryDate = null;
 
+    #[Assert\Count(max: 25)]
     #[ORM\ManyToMany(targetEntity: Student::class, mappedBy: 'projects')]
     private Collection $students;
 
+    #[Assert\Count(max: 5)]
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'projects')]
+                                        //*     ^ possédé
     private Collection $tags;
 
 
@@ -179,5 +199,10 @@ class Project
         $this->tags->removeElement($tag);
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return "{$this->getName()} (id {$this->getId()})";
     }
 }

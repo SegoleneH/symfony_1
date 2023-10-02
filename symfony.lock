@@ -1,4 +1,18 @@
 {
+    "api-platform/core": {
+        "version": "2.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.5",
+            "ref": "b86557ce5677fa855b1b2608f4a4bc4a8fed8be7"
+        },
+        "files": [
+            "config/packages/api_platform.yaml",
+            "config/routes/api_platform.yaml",
+            "src/Entity/.gitignore"
+        ]
+    },
     "doctrine/annotations": {
         "version": "2.0",
         "recipe": {
@@ -53,6 +67,18 @@
     "knplabs/knp-paginator-bundle": {
         "version": "v5.9.0"
     },
+    "nelmio/cors-bundle": {
+        "version": "2.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.5",
+            "ref": "6bea22e6c564fba3a1391615cada1437d0bde39c"
+        },
+        "files": [
+            "config/packages/nelmio_cors.yaml"
+        ]
+    },
     "phpunit/phpunit": {
         "version": "9.6",
         "recipe": {
@@ -77,6 +103,18 @@
         },
         "files": [
             "config/packages/sensio_framework_extra.yaml"
+        ]
+    },
+    "stof/doctrine-extensions-bundle": {
+        "version": "1.8",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.2",
+            "ref": "e805aba9eff5372e2d149a9ff56566769e22819d"
+        },
+        "files": [
+            "config/packages/stof_doctrine_extensions.yaml"
         ]
     },
     "symfony/console": {
@@ -292,6 +330,22 @@
         },
         "files": [
             "config/packages/messenger.yaml"
+        ]
+    },
+    "symfony/webpack-encore-bundle": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.0",
+            "ref": "082d754b3bd54b3fc669f278f1eea955cfd23cf5"
+        },
+        "files": [
+            "assets/app.js",
+            "assets/styles/app.css",
+            "config/packages/webpack_encore.yaml",
+            "package.json",
+            "webpack.config.js"
         ]
     },
     "twig/extra-bundle": {

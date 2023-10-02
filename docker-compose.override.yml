@@ -4,11 +4,14 @@ services:
 ###> doctrine/doctrine-bundle ###
   database:
     ports:
-      - "5432"
+      - "5432:5432"
 ###< doctrine/doctrine-bundle ###
 
 ###> symfony/mailer ###
   mailer:
     image: schickling/mailcatcher
-    ports: ["1025", "1080"]
+    ports: ["1025:1025", "1080:1080"]
+      ### 1025 : pour envoyer des mails
+      ### 1080 : renvoie vers l'interface de mailcatcher
+      ### cool pour tester l'envoi de mails 
 ###< symfony/mailer ###

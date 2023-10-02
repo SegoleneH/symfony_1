@@ -38,6 +38,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
     public function load(ObjectManager $manager): void
     {
         $this->manager = $manager;
+        $this->loadAdmins();
     }
 
     public function loadAdmins(): void

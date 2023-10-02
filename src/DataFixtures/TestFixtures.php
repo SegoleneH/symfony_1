@@ -48,7 +48,6 @@ class TestFixtures extends Fixture implements FixtureGroupInterface
         $this->loadProjects();
         $this->loadSchoolYears();
         $this->loadStudents();
-        $this->loadUsers();
 
     }
     //* PROJECT
@@ -250,73 +249,106 @@ class TestFixtures extends Fixture implements FixtureGroupInterface
 
         $datas = [
             [
-                'user' => $foo,
+                'email' => 'foo@example.com',
+                'password' => '123',
+                'roles' => ['ROLE_USER'],
+                'firstName' => 'Foo',
+                'lastName' => 'Example',
                 'schoolYear' => $ga,
-                'firstName' => 'Walter',
-                'lastName' => 'White',
                 'projects' => [$siteVitrine],
                 'tags' => [$html],
             ],
             [
-                'user' => $bar,
+                'email' => 'bar@example.com',
+                'password' => '123',
+                'roles' => ['ROLE_USER'],
+                'firstName' => 'Bar',
+                'lastName' => 'Example',
                 'schoolYear' => $bu,
-                'firstName' => 'Jessie',
-                'lastName' => 'Pinkman',
                 'projects' => [$wordpress],
                 'tags' => [$css],
             ],
             [
-                'user' => $baz,
+                'email' => 'baz@example.com',
+                'password' => '123',
+                'roles' => ['ROLE_USER'],
+                'firstName' => 'Baz',
+                'lastName' => 'Example',
                 'schoolYear' => $zo,
-                'firstName' => 'Gustavo',
-                'lastName' => 'Fring',
                 'projects' => [$apiRest],
                 'tags' => [$js],
             ],
         ];
 
-             //* Boucle pour les données statiques
         foreach ($datas as $data) {
+            $user = new User();
+            $user->setEmail($data['email']);
+            $password = $this->hasher->hashPassword($user, $data['password']);
+            $user->setPassword($password);
+            $user->setRoles($data['roles']);
+
+            $this->manager->persist($user);
+
             $student = new Student();
-            $student->setSchoolYear($data['schoolYear']);
             $student->setFirstName($data['firstName']);
-            $student->setlastName($data['lastName']);
+            $student->setLastName($data['lastName']);
+            $student->setSchoolYear($data['schoolYear']);
+            //fait le lien entre le student et le user créé juste avant
 
-            // $data['projects'] = liste de projects
+            //recupération du premier projet de la liste du student
             $project = $data['projects'][0];
-                // je récupère le 0ème élément
             $student->addProject($project);
-                // je l'ajoute à student_project
 
-
+            //si un seul tags par student
             $tag = $data['tags'][0];
             $student->addTag($tag);
-            
+
+            // //si pls tags par student
+            // foreach ($data['tags'] as $tag) {
+            //     $student->addTag(($tag));
+            // }
+
+            $student->setUser($user);
+
             $this->manager->persist($student);
         }
+
         $this->manager->flush();
 
 
         //     //* données dynamiques
         for ($i = 0; $i < 20; $i++) {
+            $user = new User();
+            $user->setEmail($this->faker->unique()->safeEmail());
+            $password = $this->hasher->hashPassword($user, '123');
+            $user->setPassword($password);
+            $user->setRoles(['ROLE_USER']);
+            //un premier persist pour creer le user
+            $this->manager->persist($user);
+
             $student = new Student();
-
-            $student->setSchoolYear($this->faker->randomElement($schoolYears));
-
             $student->setFirstName($this->faker->firstName());
-
             $student->setLastName($this->faker->lastName());
-
+            //selec une promo au hasard ds la liste de toutes les promos
+            $schoolYear = $this->faker->randomElement($schoolYears);
+            $student->setSchoolYear($schoolYear);
+            //selec un projet au hasard ds la liste de tous les projets
             $project = $this->faker->randomElement($projects);
             $student->addProject($project);
+            //selec entre 1 et 4 tag au hasard ds la liste de tous les tags
+            $tagsCount = random_int(1, 4);
+            $shortList = $this->faker->randomElements($tags, $tagsCount);
+            foreach ($shortList as $tag) {
+                $student->addTag($tag);
+            }
+            //fait le lien entre le student et le user créé juste avant
+            $student->setUser($user);
 
-            $tag = $this->faker->randomElement($tags);
-            $student->addTag($tag);
-
+            //un deuxieme persist pour le student. Doit etre fait apres les users car on associe user à student.
             $this->manager->persist($student);
         }
-
         $this->manager->flush();
+
     }
 
     //* TAGS
@@ -355,55 +387,6 @@ class TestFixtures extends Fixture implements FixtureGroupInterface
             $tag->setDescription($this->faker->sentence($words));
 
             $this->manager->persist($tag);
-        }
-
-        $this->manager->flush();
-    }
-
-    //* USERS
-    public function loadUsers(): void
-    {
-        $datas = [
-            [
-                'email' => 'foo@example.com',
-                'password' => '123',
-                'roles' => ['ROLE_USER'],
-            ],
-            [
-                'email' => 'bar@example.com',
-                'password' => '123',
-                'roles' => ['ROLE_USER'],
-            ],
-            [
-                'email' => 'baz@example.com',
-                'password' => '123',
-                'roles' => ['ROLE_USER'],
-            ],
-        ];
-
-        foreach ($datas as $data) {
-            $user = new User();
-            $user->setEmail($data['email']);
-            $password = $this->hasher->hashPassword($user, $data['password']);
-            //* hachage du mot de passe  ^fonction 
-            $user->setPassword($password);
-            $user->setRoles($data['roles']);
-
-            $this->manager->persist($user);
-            // indique que la variable 'user' doit être stockée dans la base de données 
-        }
-
-
-        //* données dynamiques
-        for ($i = 0; $i < 100; $i++) {
-            $user = new User();
-            $user->setEmail($this->faker->unique()->safeEmail());
-            $password = $this->hasher->hashPassword($user, '123');
-            //* hachage du mot de passe  ^fonction 
-            $user->setPassword($password);
-            $user->setRoles(['ROLE_USER']);
-
-            $this->manager->persist($user);
         }
 
         $this->manager->flush();

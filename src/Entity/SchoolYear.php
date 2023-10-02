@@ -2,13 +2,18 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SchoolYearRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[ApiResource]
 #[ORM\Entity(repositoryClass: SchoolYearRepository::class)]
+#[UniqueEntity('name')]
 class SchoolYear
 {
     #[ORM\Id]
@@ -16,15 +21,19 @@ class SchoolYear
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5, max: 100)]
     #[ORM\Column(length: 190)]
     private ?string $name = null;
 
+    #[Assert\Length(min: 5, max: 100)]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $startDate = null;
 
+    #[Assert\GreaterThan(propertyPath: 'startDate')]
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $endDate = null;
 
@@ -117,5 +126,10 @@ class SchoolYear
         }
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return "{$this->getName()} (id {$this->getId()})";
     }
 }

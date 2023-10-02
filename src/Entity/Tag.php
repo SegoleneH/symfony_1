@@ -2,23 +2,39 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[ApiResource]
+#[Gedmo\SoftDeletable(fieldName: "deletedAt", timeAware: false, hardDelete: false)]
 #[ORM\Entity(repositoryClass: TagRepository::class)]
+#[UniqueEntity('name')]
+#[Assert\UniqueEntity("email")]
 class Tag
 {
+    use TimestampableEntity;
+    use SoftDeleteableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 5, max: 100)]
     #[ORM\Column(length: 190)]
     private ?string $name = null;
 
+    #[Assert\Length(max: 120)]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
@@ -115,5 +131,10 @@ class Tag
         }
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return "{$this->getName()} (id {$this->getId()})";
     }
 }
